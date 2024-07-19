@@ -113,9 +113,31 @@ public class ShopDAO {
 		}
 	}// end shopDesignerEdit() method
 	
+	public void shopAllList(Connection connection) {  // 현재 생성된 shop 관련 내용 출력 // V1.0.1 추가 요청
+		try {
+			String sql = "select * from shop order by sno desc";
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			ResultSet resultSet = preparedStatement.executeQuery();
+			while (resultSet.next()) { // 표형식으로 리턴된 값 유무 판단
+				System.out.print("매장번호:"+ resultSet.getInt("sno") + "\t");
+				System.out.print("매장이름:"+ resultSet.getString("sname") + "\t");
+				System.out.println("매장위치:"+ resultSet.getString("slocation"));
+				System.out.print("디자이너:"+ resultSet.getString("sdesigner") + "\t");
+				System.out.print("오픈시간:"+ resultSet.getString("sopen") + "\t");
+				System.out.println("클로즈시간:"+ resultSet.getString("sclose"));
+			}
+			resultSet.close();
+			preparedStatement.close();
+
+		} catch (SQLException e) {
+			System.out.println("BoardDAO.list() sql문 오류");
+			e.printStackTrace();
+		}
+	}// end shopList() method
+	
 	public void shopList(Connection connection) {  // 현재 생성된 shop의 sno/sname/slocation 부분 출력
 		try {
-			String sql = "select sno, sname, slocation from shop order by desc";
+			String sql = "select sno, sname, slocation from shop order by sno desc";
 			PreparedStatement preparedStatement = connection.prepareStatement(sql);
 			ResultSet resultSet = preparedStatement.executeQuery();
 			while (resultSet.next()) { // 표형식으로 리턴된 값 유무 판단
@@ -156,6 +178,65 @@ public class ShopDAO {
 	}// end shopList() method
 	
 
+	
+	
+	///// 임시저장소 
+	public void memberGradeEdit(MemberDTO memberNo, Connection connection, Scanner scanner) {
+		// 입력한 Mno와 관련된 개인정보 재확인
+		try {
+			String sql = "select mname, mphone from member where mno = ? ";
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.setInt(1, memberNo.getMno());
+			ResultSet resultSet = preparedStatement.executeQuery();
+			while (resultSet.next()) { // 표형식으로 리턴된 값 유무 판단
+				System.out.println("선택하신 계정의 상세내용입니다.");
+				System.out.print("이름:" + resultSet.getString("mname") + "\t");
+				System.out.print("휴대전화번호:" + resultSet.getString("mphone") + "\t");
+			}
+			System.out.print("변경후 계정등급:" + memberNo.getMgrade());
+			
+			resultSet.close();
+			preparedStatement.close();
+
+		} catch (SQLException e) {
+			System.out.println("sql문 오류");
+			e.printStackTrace();
+		}
+		System.out.println("상세 내용은 위와 같습니다. 변경하시겠습니까?");
+		System.out.print("1.변경 | 2.취소");
+		int select = scanner.nextInt();
+		switch (select) {
+		case 1:
+			int resultIEditGrade = 0;
+			try {
+				String sql = "update member set mgrade = ? where mno = ?";
+				PreparedStatement preparedStatement = connection.prepareStatement(sql);
+				preparedStatement.setInt(1, memberNo.getmGrade());
+				preparedStatement.setInt(2, memberNo.getmNo());
+				resultIEditGrade = preparedStatement.executeUpdate();
+				if (resultIEditGrade > 0) {
+					System.out.println("계정 권한을 변경하였습니다.");
+					connection.commit();
+				} else {
+					System.out.println("결과" + resultIEditGrade + "입니다.");
+					System.out.println("입력 실패 : 롤백합니다.");
+					connection.rollback();
+				}
+				preparedStatement.close();
+
+			} catch (SQLException e) {
+				System.out.println("sql 문을 확인하세요");
+				e.printStackTrace();
+			}
+			break;
+		case 2:
+			System.out.println("변경을 취소합니다.");
+			break;
+		default:
+			System.out.println("명령어만 입력해 주세요.");
+		}
+	}// end memberGradeEdit() method
+	
 	
 	
 

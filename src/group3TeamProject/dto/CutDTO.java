@@ -14,9 +14,8 @@ public class CutDTO {
 	//constructor
 	public CutDTO() {} // basic constructor
 	
-	public CutDTO(String scname, int csno, String ccutname, int cprice, String ccontents) {
+	public CutDTO(int csno, String ccutname, int cprice, String ccontents) {  // V1.0.1 추가 요청
 		super();
-		this.scname = scname;
 		this.csno = csno;
 		this.ccutname = ccutname;
 		this.cprice = cprice;

@@ -9,13 +9,53 @@ import group3TeamProject.dto.CutDTO;
 
 public class CutDAO {
 
-	public void insertCut(CutDTO cutdto, Connection connection) { // 헤어스타일 추가하는 sql
+	public void cutAllList(Connection connection) {  // V1.0.1 추가 요청
+		try {
+			String sql = "select * from cut order by ccode asc";
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			ResultSet resultSet = preparedStatement.executeQuery();
+			while (resultSet.next()) { // 표형식으로 리턴된 값 유무 판단
+				System.out.print("매장이름:" + resultSet.getString("csname") + "\t");
+				System.out.print("매장번호:" + resultSet.getInt("csno") + "\t");
+				System.out.println("헤어코드:" + resultSet.getInt("ccode"));
+				System.out.print("헤어이름:" + resultSet.getString("ccutname") + "\t");
+				System.out.print("헤어가격:" + resultSet.getInt("cprice") + "\t");
+				System.out.println("헤어설명:" + resultSet.getString("ccontents"));
+			}
+			resultSet.close();
+			preparedStatement.close();
+
+		} catch (SQLException e) {
+			System.out.println("BoardDAO.list() sql문 오류");
+			e.printStackTrace();
+		}
+
+	}// end cutAllList() method
+
+	public void insertCut(CutDTO cutdto, Connection connection) { // V1.0.1 추가 요청
 		int resultInsertHair = 0;
+		String shopName = null;
+		try {
+			String sql = "select sname from shop where sno = ?";
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.setInt(1, cutdto.getCsno());
+			ResultSet resultSet = preparedStatement.executeQuery();
+			while (resultSet.next()) { // 표형식으로 리턴된 값 유무 판단
+				shopName = resultSet.getString("sname");
+			}
+			resultSet.close();
+			preparedStatement.close();
+
+		} catch (SQLException e) {
+			System.out.println("BoardDAO.list() sql문 오류");
+			e.printStackTrace();
+		}
+
 		try {
 			String sql = "insert into cut(csname, csno, ccode, ccutname, cprice, ccontents)"
 					+ " values(?, ?, sCode_seq.nextval, ?, ?, ?)";
 			PreparedStatement preparedStatement = connection.prepareStatement(sql);
-			preparedStatement.setString(1, cutdto.getScname());
+			preparedStatement.setString(1, shopName);
 			preparedStatement.setInt(2, cutdto.getCsno());
 			preparedStatement.setString(3, cutdto.getCcutname());
 			preparedStatement.setInt(4, cutdto.getCprice());
@@ -29,6 +69,7 @@ public class CutDAO {
 				System.out.println("입력 실패 : 롤백합니다.");
 				connection.rollback();
 			}
+
 			preparedStatement.close();
 
 		} catch (SQLException e) {
@@ -38,7 +79,7 @@ public class CutDAO {
 	}// end insertCut() method
 
 	public void cutEditString(CutDTO cutdto, String updateCut, String inputSt, // 매장이름 / 매커트이름 / 커트내용 수정 메서드
-			Connection connection) { 
+			Connection connection) {
 		int resultEditSt = 0;
 		try {
 			String sql = "update cut set" + updateCut + "= ? where ccode = ?";
@@ -63,7 +104,7 @@ public class CutDAO {
 	}// end cutEditString() method
 
 	public void cutEditInt(CutDTO cutdto, String updateCut, int inputIn, // 매장번호 / 커트가격 수정 메서드
-			Connection connection) { 
+			Connection connection) {
 		int resultEditIn = 0;
 		try {
 			String sql = "update cut set" + updateCut + "= ? where ccode = ?";
@@ -86,7 +127,7 @@ public class CutDAO {
 			e.printStackTrace();
 		}
 	}// end cutEditString() method
-	
+
 	public void cutDelete(CutDTO cutDel, Connection connection) { // 헤어스타일 삭제 메서드
 		int resultIEditHair7 = 0;
 		try {
@@ -109,20 +150,20 @@ public class CutDAO {
 			e.printStackTrace();
 		}
 	}// end shopDesignerEdit() method
-	
-	public void CutDetail(Connection connection) {  //csno를 입력받고 해당하는 시술의 디테일을 보여주는 메서드
+
+	public void CutDetail(Connection connection) { // csno를 입력받고 해당하는 시술의 디테일을 보여주는 메서드
 		try {
 			String sql = "select * from cut where csno =? ";
 			PreparedStatement preparedStatement = connection.prepareStatement(sql);
 			preparedStatement.setInt(1, shopdto.getCsno());
 			ResultSet resultSet = preparedStatement.executeQuery();
 			while (resultSet.next()) { // 표형식으로 리턴된 값 유무 판단
-				System.out.print("매장이름:"+ resultSet.getString("csname") + "\t");
-				System.out.print("매장번호:"+ resultSet.getInt("csno") + "\t");
-				System.out.println("헤어코드:"+ resultSet.getInt("ccode"));
-				System.out.print("헤어이름:"+ resultSet.getString("ccutname") + "\t");
-				System.out.print("헤어가격:"+ resultSet.getInt("cprice") + "\t");
-				System.out.println("헤어설명:"+ resultSet.getString("ccontents"));
+				System.out.print("매장이름:" + resultSet.getString("csname") + "\t");
+				System.out.print("매장번호:" + resultSet.getInt("csno") + "\t");
+				System.out.println("헤어코드:" + resultSet.getInt("ccode"));
+				System.out.print("헤어이름:" + resultSet.getString("ccutname") + "\t");
+				System.out.print("헤어가격:" + resultSet.getInt("cprice") + "\t");
+				System.out.println("헤어설명:" + resultSet.getString("ccontents"));
 			}
 			resultSet.close();
 			preparedStatement.close();
@@ -132,5 +173,5 @@ public class CutDAO {
 			e.printStackTrace();
 		}
 	}// end shopList() method
-	
+
 }

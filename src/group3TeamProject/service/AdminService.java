@@ -50,9 +50,9 @@ public class AdminService {
 	public void manageCut() { // 헤어컷 관리 메뉴
 		boolean hairMenuRun = true;
 		while (hairMenuRun) {
-			System.out.println("---------- 헤어컷 관리 ----------");
-			System.out.println("   1.추가|2.수정|3.제거|4.뒤로가기");
-			System.out.println("------------------------------");
+			System.out.println("------------ 헤어컷 관리 ------------");
+			System.out.println("1.추가|2.리스트보기|2.수정|3.제거|4.뒤로가기");
+			System.out.println("----------------------------------");
 			System.out.print(">>>");
 			int select = scanner.nextInt();
 			switch (select) {
@@ -61,14 +61,19 @@ public class AdminService {
 				manageCutAdd();
 				break;
 			case 2:
+				System.out.println("헤어컷 전체리스트를 확인합니다."); // V1.0.1 추가 요청
+				CutDAO cutdao = new CutDAO(); // V1.0.1 추가 요청
+				cutdao.cutAllList(connection); // V1.0.1 추가 요청
+				break;
+			case 3:
 				System.out.println("헤어컷 수정을 진행합니다.");
 				manageCutEdit();
 				break;
-			case 3:
+			case 4:
 				System.out.println("헤어컷 제거를 진행합니다.");
 				manageHairDelete();
 				break;
-			case 4:
+			case 5:
 				System.out.println("헤어컷 관리 종료");
 				hairMenuRun = false;
 				break;
@@ -81,8 +86,8 @@ public class AdminService {
 	public void manageCutAdd() { // 헤어컷 추가 메서드
 
 		System.out.println("아래 내용을 입력해 주세요.");
-		System.out.print("매장이름 : ");
-		String csname = scanner.next();
+		//System.out.print("매장이름 : ");//자동입력 기능 추가  // V1.0.1 추가 요청
+		//String csname = scanner.next();  // V1.0.1 추가 요청
 		System.out.print("매장번호 : ");
 		int csno = scanner.nextInt();
 		System.out.print("커트이름 : ");
@@ -91,7 +96,7 @@ public class AdminService {
 		int cprice = scanner.nextInt();
 		System.out.print("커트설명 : ");
 		String ccontents = scanner.next();
-		CutDTO cutdto = new CutDTO(csname, csno, ccutname, cprice, ccontents);
+		CutDTO cutdto = new CutDTO(csno, ccutname, cprice, ccontents);  // V1.0.1 추가 요청
 		CutDAO cutdao = new CutDAO();
 		cutdao.insertCut(cutdto, connection);
 	}// end manageCutAdd() method
@@ -172,9 +177,9 @@ public class AdminService {
 	public void manageShop() { // 매장 관리 메뉴
 		boolean shopMenuRun = true;
 		while (shopMenuRun) {
-			System.out.println("-------  매장 관리(shop) -------");
-			System.out.println("   1.추가|2.수정|3.제거|4.뒤로가기");
-			System.out.println("------------------------------");
+			System.out.println("-----------  매장 관리(shop) -----------");
+			System.out.println("1.추가|2.매장전체리스트|2.수정|3.제거|4.뒤로가기");
+			System.out.println("-------------------------------------");
 			System.out.print(">>>");
 			int select = scanner.nextInt();
 			switch (select) {
@@ -183,14 +188,19 @@ public class AdminService {
 				manageShopAdd();
 				break;
 			case 2:
+				System.out.println("헤어컷 전체리스트를 확인합니다."); // V1.0.1 추가 요청
+				ShopDAO shopdao = new ShopDAO(); // V1.0.1 추가 요청
+				shopdao.shopAllList(connection);  // V1.0.1 추가 요청
+				break;
+			case 3:
 				System.out.println("매장 수정을 진행합니다.");
 				manageShopEdit();
 				break;
-			case 3:
+			case 4:
 				System.out.println("매장 제거를 진행합니다.");
 				manageShopDelete();
 				break;
-			case 4:
+			case 5:
 				System.out.println("매장 관리 메뉴 종료");
 				shopMenuRun = false;
 				break;
@@ -318,7 +328,7 @@ public class AdminService {
 		} // end while
 	} // end manageDesigner()
 
-	/*
+	
 	public void accountGradeEdit() {
 		System.out.println("아래 내용을 입력해 주세요.");
 		System.out.print("회원 번호 : ");
@@ -333,7 +343,7 @@ public class AdminService {
 		shopdao8.memberGradeEdit(memberNo, connection);
 
 	}// end accountGradeEdit() method
-	*/
+	
 
 	
 	
